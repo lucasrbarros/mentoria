@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Novo Chamado{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Novo Chamado</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="entidade" class="form-label">Entidade</label>
+                        <input type="text" class="form-control" id="entidade" name="entidade" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="duvida_erro" class="form-label">Dúvida/Erro</label>
+                        <textarea class="form-control" id="duvida_erro" name="duvida_erro" rows="4" required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="validacoes" class="form-label">Validações já realizadas</label>
+                        <textarea class="form-control" id="validacoes" name="validacoes" rows="3"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="outros_clientes" class="form-label">Acontece em outros clientes? Se sim, quais clientes testados?</label>
+                        <textarea class="form-control" id="outros_clientes" name="outros_clientes" rows="2"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="consultou_movidesk" name="consultou_movidesk">
+                            <label class="form-check-label" for="consultou_movidesk">
+                                Consultou histórico de chamados no Movidesk?
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="print" class="form-label">Print de tela</label>
+                        <input type="file" class="form-control" id="print" name="print" accept="image/*">
+                        <div class="form-text">Formatos aceitos: PNG, JPG, JPEG, GIF. Tamanho máximo: 16MB</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="link_ambiente" class="form-label">Link do ambiente</label>
+                        <input type="url" class="form-control" id="link_ambiente" name="link_ambiente">
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> Criar Chamado
+                        </button>
+                        <a href="{{ url_for('chamados.index') }}" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

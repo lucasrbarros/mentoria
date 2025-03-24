@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Chamados{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Chamados</h2>
+    <a href="{{ url_for('chamados.novo') }}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Novo Chamado
+    </a>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <form method="GET" class="row g-3">
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" name="search" placeholder="Buscar por entidade ou dúvida...">
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select" name="status">
+                            <option value="">Todos os Status</option>
+                            <option value="pendente">Pendente</option>
+                            <option value="em_atendimento">Em Atendimento</option>
+                            <option value="resolvido">Resolvido</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select" name="prioridade">
+                            <option value="">Todas as Prioridades</option>
+                            <option value="0">Normal</option>
+                            <option value="1">Alta</option>
+                            <option value="2">Urgente</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    {% for chamado in chamados %}
+    <div class="col-md-6 mb-4">
+        <div class="card chamado-card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">{{ chamado.entidade }}</h5>
+                <span class="badge status-{{ chamado.status }}">
+                    {% if chamado.status == 'pendente' %}
+                        <i class="bi bi-clock"></i> Pendente
+                    {% elif chamado.status == 'em_atendimento' %}
+                        <i class="bi bi-person-check"></i> Em Atendimento
+                    {% else %}
+                        <i class="bi bi-check-circle"></i> Resolvido
+                    {% endif %}
+                </span>
+            </div>
+            <div class="card-body">
+                <p class="card-text">{{ chamado.duvida_erro[:200] }}{% if chamado.duvida_erro|length > 200 %}...{% endif %}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted">
+                        <i class="bi bi-person"></i> {{ chamado.autor.username }}
+                        <br>
+                        <i class="bi bi-clock"></i> {{ chamado.created_at.strftime('%d/%m/%Y %H:%M') }}
+                    </small>
+                    <div>
+                        <a href="{{ url_for('chamados.visualizar', id=chamado.id) }}" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-eye"></i> Ver Detalhes
+                        </a>
+                        {% if current_user.is_senior and chamado.status == 'pendente' %}
+                        <a href="{{ url_for('chamados.atender', id=chamado.id) }}" class="btn btn-sm btn-warning">
+                            <i class="bi bi-person-check"></i> Atender
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12">
+        <div class="alert alert-info">
+            Nenhum chamado encontrado.
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %} 
