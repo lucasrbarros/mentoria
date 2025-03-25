@@ -5,6 +5,9 @@ from werkzeug.utils import secure_filename
 from app.models import Chamado, User
 from app import db
 from datetime import datetime
+import logging
+
+logger = logging.getLogger(__name__)
 
 bp = Blueprint('chamados', __name__)
 
@@ -14,8 +17,37 @@ def allowed_file(filename):
 @bp.route('/')
 @login_required
 def index():
-    chamados = Chamado.query.order_by(Chamado.created_at.desc()).all()
-    return render_template('chamados/index.html', chamados=chamados)
+    # Obtém os parâmetros de filtro da URL
+    search = request.args.get('search', '')
+    status = request.args.get('status', '')
+    prioridade = request.args.get('prioridade', '')
+    
+    logger.info(f'Filtrando chamados - Busca: {search}, Status: {status}, Prioridade: {prioridade}')
+    
+    # Inicia a consulta base
+    query = Chamado.query
+    
+    # Aplica os filtros
+    if search:
+        query = query.filter(
+            Chamado.entidade.ilike(f'%{search}%') | 
+            Chamado.duvida_erro.ilike(f'%{search}%')
+        )
+    
+    if status:
+        query = query.filter(Chamado.status == status)
+    
+    if prioridade:
+        query = query.filter(Chamado.prioridade == int(prioridade))
+    
+    # Ordena os resultados
+    chamados = query.order_by(Chamado.created_at.desc()).all()
+    
+    logger.info(f'Total de chamados encontrados: {len(chamados)}')
+    
+    # Renderiza o template com os chamados filtrados
+    return render_template('chamados/index.html', chamados=chamados,
+                          search=search, status=status, prioridade=prioridade)
 
 @bp.route('/novo', methods=['GET', 'POST'])
 @login_required
@@ -25,6 +57,7 @@ def novo():
         duvida_erro = request.form['duvida_erro']
         validacoes = request.form['validacoes']
         outros_clientes = request.form['outros_clientes']
+        prioridade = request.form['prioridade']
         consultou_movidesk = 'consultou_movidesk' in request.form
         link_ambiente = request.form['link_ambiente']
         
@@ -35,6 +68,7 @@ def novo():
             outros_clientes=outros_clientes,
             consultou_movidesk=consultou_movidesk,
             link_ambiente=link_ambiente,
+            prioridade=prioridade,
             autor_id=current_user.id
         )
         

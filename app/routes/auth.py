@@ -57,6 +57,7 @@ def register():
         username = request.form['username']
         email = request.form['email']
         password = request.form['password']
+        is_senior = 'is_senior' in request.form
         
         if User.query.filter_by(username=username).first():
             flash('Nome de usuário já existe')
@@ -66,11 +67,12 @@ def register():
             flash('Email já cadastrado')
             return redirect(url_for('auth.register'))
         
-        user = User(username=username, email=email)
+        user = User(username=username, email=email, is_senior=is_senior)
         user.set_password(password)
         db.session.add(user)
         db.session.commit()
         
+        logger.info(f'Usuário {username} criado com sucesso. Senior: {is_senior}')
         flash('Cadastro realizado com sucesso!')
         return redirect(url_for('auth.login'))
     

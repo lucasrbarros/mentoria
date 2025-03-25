@@ -16,22 +16,22 @@
             <div class="card-body">
                 <form method="GET" class="row g-3">
                     <div class="col-md-4">
-                        <input type="text" class="form-control" name="search" placeholder="Buscar por entidade ou dúvida...">
+                        <input type="text" class="form-control" name="search" placeholder="Buscar por entidade ou dúvida..." value="{{ search }}">
                     </div>
                     <div class="col-md-3">
                         <select class="form-select" name="status">
                             <option value="">Todos os Status</option>
-                            <option value="pendente">Pendente</option>
-                            <option value="em_atendimento">Em Atendimento</option>
-                            <option value="resolvido">Resolvido</option>
+                            <option value="pendente" {% if status == 'pendente' %}selected{% endif %}>Pendente</option>
+                            <option value="em_atendimento" {% if status == 'em_atendimento' %}selected{% endif %}>Em Atendimento</option>
+                            <option value="resolvido" {% if status == 'resolvido' %}selected{% endif %}>Resolvido</option>
                         </select>
                     </div>
                     <div class="col-md-3">
                         <select class="form-select" name="prioridade">
                             <option value="">Todas as Prioridades</option>
-                            <option value="0">Normal</option>
-                            <option value="1">Alta</option>
-                            <option value="2">Urgente</option>
+                            <option value="0" {% if prioridade == '0' %}selected{% endif %}>Normal</option>
+                            <option value="1" {% if prioridade == '1' %}selected{% endif %}>Alta</option>
+                            <option value="2" {% if prioridade == '2' %}selected{% endif %}>Urgente</option>
                         </select>
                     </div>
                     <div class="col-md-2">
