@@ -126,4 +126,32 @@ def resolver(id):
     db.session.commit()
     
     flash('Chamado marcado como resolvido')
-    return redirect(url_for('chamados.index')) 
+    return redirect(url_for('chamados.index'))
+
+@bp.route('/chamado/<int:id>/excluir', methods=['POST'])
+@login_required
+def excluir(id):
+    chamado = Chamado.query.get_or_404(id)
+    
+    # Verifica se o usuário tem permissão para excluir
+    if not (current_user.is_senior or chamado.autor_id == current_user.id):
+        flash('Você não tem permissão para excluir este chamado.', 'error')
+        return redirect(url_for('chamados.visualizar', id=id))
+    
+    try:
+        # Remove o arquivo de print se existir
+        if chamado.print_path:
+            print_path = os.path.join(current_app.config['UPLOAD_FOLDER'], chamado.print_path)
+            if os.path.exists(print_path):
+                os.remove(print_path)
+        
+        # Remove o chamado do banco de dados
+        db.session.delete(chamado)
+        db.session.commit()
+        
+        flash('Chamado excluído com sucesso!')
+        return redirect(url_for('chamados.index'))
+    except Exception as e:
+        db.session.rollback()
+        flash('Erro ao excluir o chamado. Tente novamente.', 'error')
+        return redirect(url_for('chamados.visualizar', id=id)) 
