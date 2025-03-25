@@ -2,7 +2,7 @@ import os
 from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app
 from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
-from app.models import Chamado, User
+from app.models import Chamado, User, FotoChamado
 from app import db
 from datetime import datetime, timedelta
 import logging
@@ -76,14 +76,19 @@ def novo():
             autor_id=current_user.id
         )
         
-        if 'print' in request.files:
-            file = request.files['print']
-            if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-                filename = f"{timestamp}_{filename}"
-                file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
-                chamado.print_path = filename
+        # Processa as fotos
+        if 'prints' in request.files:
+            files = request.files.getlist('prints')
+            for file in files:
+                if file and allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+                    filename = f"{timestamp}_{filename}"
+                    file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
+                    
+                    # Cria o registro da foto
+                    foto = FotoChamado(chamado=chamado, print_path=filename)
+                    db.session.add(foto)
         
         db.session.add(chamado)
         db.session.commit()

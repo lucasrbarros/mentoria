@@ -32,4 +32,4 @@ def verificar_criar_admin():
 
 if __name__ == '__main__':
     verificar_criar_admin()
-    app.run(debug=True, host='0.0.0.0')
+    app.run(host='0.0.0.0')

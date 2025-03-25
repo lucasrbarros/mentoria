@@ -44,10 +44,33 @@
                     </div>
                 </div>
 
-                {% if chamado.print_path %}
-                <div class="mt-4">
-                    <h5 class="card-title">Print de tela</h5>
-                    <img src="{{ url_for('static', filename='uploads/' + chamado.print_path) }}" class="img-fluid rounded" alt="Print de tela">
+                {% if chamado.print_path or chamado.fotos %}
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Prints de tela</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            {% if chamado.print_path %}
+                            <div class="col-md-6 mb-3">
+                                <img src="{{ url_for('static', filename='uploads/' + chamado.print_path) }}" 
+                                     class="img-fluid rounded" 
+                                     alt="Print de tela"
+                                     style="cursor: pointer;"
+                                     onclick="abrirFoto(this.src)">
+                            </div>
+                            {% endif %}
+                            {% for foto in chamado.fotos %}
+                            <div class="col-md-6 mb-3">
+                                <img src="{{ url_for('static', filename='uploads/' + foto.print_path) }}" 
+                                     class="img-fluid rounded" 
+                                     alt="Foto do chamado"
+                                     style="cursor: pointer;"
+                                     onclick="abrirFoto(this.src)">
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
                 {% endif %}
 
@@ -134,4 +157,27 @@
         </div>
     </div>
 </div>
+
+<!-- Modal para visualização de fotos -->
+<div class="modal fade" id="fotoModal" tabindex="-1" aria-labelledby="fotoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="fotoModalLabel">Visualização da foto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="fotoModalImg" src="" class="img-fluid" alt="Foto em tamanho maior">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function abrirFoto(src) {
+    const modal = new bootstrap.Modal(document.getElementById('fotoModal'));
+    document.getElementById('fotoModalImg').src = src;
+    modal.show();
+}
+</script>
 {% endblock %} 
