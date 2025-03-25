@@ -4,7 +4,7 @@ from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
 from app.models import Chamado, User
 from app import db
-from datetime import datetime
+from datetime import datetime, timedelta
 import logging
 
 logger = logging.getLogger(__name__)
@@ -45,9 +45,13 @@ def index():
     
     logger.info(f'Total de chamados encontrados: {len(chamados)}')
     
-    # Renderiza o template com os chamados filtrados
-    return render_template('chamados/index.html', chamados=chamados,
-                          search=search, status=status, prioridade=prioridade)
+    # Renderiza o template com os chamados filtrados e inclui o timedelta
+    return render_template('chamados/index.html', 
+                           chamados=chamados,
+                           search=search, 
+                           status=status, 
+                           prioridade=prioridade,
+                           timedelta=timedelta)
 
 @bp.route('/novo', methods=['GET', 'POST'])
 @login_required
@@ -93,7 +97,7 @@ def novo():
 @login_required
 def visualizar(id):
     chamado = Chamado.query.get_or_404(id)
-    return render_template('chamados/visualizar.html', chamado=chamado)
+    return render_template('chamados/visualizar.html', chamado=chamado, timedelta=timedelta)
 
 @bp.route('/chamado/<int:id>/atender')
 @login_required

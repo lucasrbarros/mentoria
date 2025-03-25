@@ -69,7 +69,7 @@
                     </li>
                     <li class="mb-2">
                         <i class="bi bi-clock"></i> <strong>Criado em:</strong><br>
-                        {{ chamado.created_at.strftime('%d/%m/%Y %H:%M') }}
+                        {{ (chamado.created_at - timedelta(hours=3)).strftime('%d/%m/%Y %H:%M') }}
                     </li>
                     {% if chamado.atendente %}
                     <li class="mb-2">

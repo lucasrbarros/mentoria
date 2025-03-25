@@ -65,7 +65,7 @@
                     <small class="text-muted">
                         <i class="bi bi-person"></i> {{ chamado.autor.username }}
                         <br>
-                        <i class="bi bi-clock"></i> {{ chamado.created_at.strftime('%d/%m/%Y %H:%M') }}
+                        <i class="bi bi-clock"></i> {{ (chamado.created_at - timedelta(hours=3)).strftime('%d/%m/%Y %H:%M') }}
                     </small>
                     <div>
                         <a href="{{ url_for('chamados.visualizar', id=chamado.id) }}" class="btn btn-sm btn-outline-primary">
